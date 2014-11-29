@@ -1,0 +1,56 @@
+﻿.qv-object-${name} div.qv-object-content-container {
+	overflow: auto;
+}
+.qv-object-${name} ul {
+	list-style: none;
+}
+.qv-object-${name} li.data {
+	padding: 4px;
+	border-bottom: 1px solid #ddd;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+/* frequency */
+.qv-object-${name} li.data span
+{
+	padding-left: 10px;
+	font-style: italic;
+	float:right;
+}
+/* colors when NOT in selection mode */
+
+.qv-object-${name} li.stateS, .qv-object-${name} li.stateL {
+	background-image: linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -o-linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -moz-linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -webkit-linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -ms-linear-gradient(top, #52cc52, #4dc04d);
+	color: #fff;
+}
+
+.qv-object-${name} li.stateX, .qv-object-com-qliktech-${name} li.stateXL, .qv-object-com-qliktech-${name} li.stateXS {
+	background-color: #A9A9A9;
+	color: #fff;
+}
+
+.qv-object-${name} li.stateA {
+	background-image: none;
+	background-color: #ddd;
+	color: #000;
+}
+/* colors when in selection mode */
+.qv-object-${name}.qv-selections-active li {
+	background-image: none;
+	background-color: #ddd;
+	color: #000;
+}
+
+.qv-object-${name}.qv-selections-active li.selected {
+	background-image: linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -o-linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -moz-linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -webkit-linear-gradient(top, #52cc52, #4dc04d);
+	background-image: -ms-linear-gradient(top, #52cc52, #4dc04d);
+	color: #fff;
+}

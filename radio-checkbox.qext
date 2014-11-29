@@ -1,0 +1,9 @@
+{
+	"name": "Styled list",
+	"description": "${name}",
+	"icon": "list",
+	"type": "visualization",
+	"version": 1,
+	"preview": "listbox",
+	"author": ""
+}
