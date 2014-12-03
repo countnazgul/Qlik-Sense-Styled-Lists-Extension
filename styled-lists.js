@@ -3,7 +3,7 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 	$( "<style>" ).html( cssContent ).appendTo( "head" );
 	return {
 		initialProperties: {
-			version: 1.0,
+			version: 1.1,
 			qListObjectDef: {
 				qShowAlternatives: true,
 				qFrequencyMode: "V",
@@ -19,7 +19,7 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 			items: {
 				dimension: {
 					type: "items",
-					translation: "properties.dimension",
+					translation: "Dimension",
 					ref: "qListObjectDef",
 					min: 1,
 					max: 1,
@@ -27,7 +27,7 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 						label: {
 							type: "string",
 							ref: "qListObjectDef.qDef.qFieldLabels.0",
-							translation: "properties.label",
+							translation: "Label",
 							show: true
 						},
 						libraryId: {
@@ -35,7 +35,7 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 							component: "library-item",
 							libraryItemType: "dimension",
 							ref: "qListObjectDef.qLibraryId",
-							translation: "properties.dimension",
+							translation: "Dimension",
 							show: function ( data ) {
 								return data.qListObjectDef && data.qListObjectDef.qLibraryId;
 							}
@@ -45,7 +45,7 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 							expression: "always",
 							expressionType: "dimension",
 							ref: "qListObjectDef.qDef.qFieldDefs.0",
-							translation: "properties.field",
+							translation: "Field",
 							show: function ( data ) {
 								return data.qListObjectDef && !data.qListObjectDef.qLibraryId;
 							}
@@ -72,6 +72,9 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 						// }
 					}
 				},
+				// sorting: {
+				//   uses: "sorting"
+			 // },
 				settings: {
 					uses: "settings",
 					items: {
@@ -116,6 +119,11 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
       						ref: "multiple",
       						defaultValue: false
       					},
+      					defaultvalue: {
+      						type: "string",
+      						label: "Default selected value",
+      						ref: "defaultselection"
+      					},
       					btnactive: {
       						type: "string",
       						label: "Active style (css)",
@@ -152,8 +160,13 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 		paint: function ( $element, layout ) {
 		  var self = this, html = "";
 			var data = [];
+      var selected = 0;
+      var defaultvalue = null;
 
 			this.backendApi.eachDataRow( function ( rownum, row ) {
+			  if(row[0].qState === 'S') {
+			    selected = 1;
+			  }
 			  data.push(row[0]);
 			});
 
@@ -162,6 +175,10 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 			for(var i = 0; i < data.length; i++) {
 			  var checked = '';
 			  var text = data[i].qText;
+
+			  if(data[i].qText == layout.defaultselection) {
+			    defaultvalue = data[i];
+			  }
 
 			  var orientation = '';
 			  if(layout.orientation === undefined) {
@@ -214,6 +231,12 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 			  }
 			}
 
+      if(selected === 0) {
+        if(defaultvalue != null) {
+          self.backendApi.selectValues( 0, [defaultvalue.qElemNumber], true );
+        }
+      }
+
 			$element.html( html );
 		 	if ( this.selectionsEnabled ) {
 		 		$element.find( 'input' ).on( 'qv-activate', function () {
@@ -226,8 +249,8 @@ define( ["jquery", "text!./style.css"], function ( $, cssContent ) {
 		 				}
 		 				$( this ).toggleClass( "selected" );
 		 			}
-		 		} );
+		 		});
 		 	}
 		}
 	};
-} );
+});
