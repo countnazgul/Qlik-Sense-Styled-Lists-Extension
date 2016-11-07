@@ -10,7 +10,7 @@ Object type: Checkboxes, Radio buttons or Buttons
 
 Toggle select: true or false. "false" is like the "only one selected" option in Qlikview
 
-Default selected value: Populated value will be selected after clear the selection on this field (case sensitive)
+Default selected value: Populated value(s) (comma separated) will be selected after the page refresh. Case sensitive
 
 Active style: style the selected option. Accept valid CSS
 
