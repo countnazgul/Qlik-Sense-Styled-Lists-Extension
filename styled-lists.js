@@ -52,31 +52,8 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 								return data.qListObjectDef && !data.qListObjectDef.qLibraryId;
 							}
 						}
-						// frequency: {
-						// 	type: "string",
-						// 	component: "dropdown",
-						// 	label: "Frequency mode",
-						// 	ref: "qListObjectDef.qFrequencyMode",
-						// 	options: [{
-						// 		value: "N",
-						// 		label: "No frequency"
-						// 	}, {
-						// 		value: "V",
-						// 		label: "Absolute value"
-						// 	}, {
-						// 		value: "P",
-						// 		label: "Percent"
-						// 	}, {
-						// 		value: "R",
-						// 		label: "Relative"
-						// 	}],
-						// 	defaultValue: "V"
-						// }
 					}
 				},
-				// sorting: {
-				//   uses: "sorting"
-				// },
 				settings: {
 					uses: "settings",
 					items: {
@@ -114,23 +91,6 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 										label: "Button"
 									}],
 									defaultValue: "R"
-								},
-								selectiontype: {
-									type: "string",
-									component: "radiobuttons",
-									label: "Selection Type",
-									ref: "selectiontype",
-									options: [{
-										value: "S",
-										label: "Single"
-									}, {
-										value: "M",
-										label: "Multiple"
-									}, {
-										value: "T",
-										label: "Toggle"
-									}],
-									defaultValue: "M"
 								},
 								multiple: {
 									type: "boolean",
@@ -183,13 +143,17 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 			var defaultvalue = null;
 			var defaultselectionList = layout.defaultselection.split(',');
 			var selectValues = [];
+			var allPossible = true;
 
-
-			this.backendApi.eachDataRow(function (rownum, row) {
+			this.backendApi.eachDataRow(function (rownum, row) {				
 				if (row[0].qState === 'S') {
 					selected = 1;
 				}
 				data.push(row[0]);
+				
+				if( row[0].qState != 'O' ) {
+					allPossible = false;
+				}
 			});
 
 			data.sort(function (a, b) { return parseInt(a.qNum) - parseInt(b.qNum) });
@@ -234,8 +198,10 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 				//console.log(data[i].qState)
 				if (data[i].qState === "S" || data[i].qState === "O") {
 					if (objtype != 'button') {
-						checked = ' checked ';
-						text = '<strong>' + data[i].qText + '</strong>';
+						if(allPossible == false) {
+							checked = ' checked ';
+							text = '<strong>' + data[i].qText + '</strong>';
+						}						
 					} else {
 						text = data[i].qText;
 					}
@@ -292,7 +258,7 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 
 			$element.find('input').on('qv-activate', function () {
 				var valueS = parseInt(this.getAttribute("data-value"), 10);
-				console.log(toggle)
+				//console.log(toggle)
 				self.backendApi.selectValues(dim, [valueS], layout.multiple);
 			});
 
