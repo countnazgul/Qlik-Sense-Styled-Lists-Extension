@@ -1,5 +1,7 @@
+var isDefaultSelected = false;
+
 define(["jquery", "text!./style.css"], function ($, cssContent) {
-	'use strict';
+	'use strict'
 	$("<style>").html(cssContent).appendTo("head");
 	return {
 		initialProperties: {
@@ -113,6 +115,23 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 									}],
 									defaultValue: "R"
 								},
+								selectiontype: {
+									type: "string",
+									component: "radiobuttons",
+									label: "Selection Type",
+									ref: "selectiontype",
+									options: [{
+										value: "S",
+										label: "Single"
+									}, {
+										value: "M",
+										label: "Multiple"
+									}, {
+										value: "T",
+										label: "Toggle"
+									}],
+									defaultValue: "M"
+								},
 								multiple: {
 									type: "boolean",
 									label: "Toggle select",
@@ -165,6 +184,7 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 			var defaultselectionList = layout.defaultselection.split(',');
 			var selectValues = [];
 
+
 			this.backendApi.eachDataRow(function (rownum, row) {
 				if (row[0].qState === 'S') {
 					selected = 1;
@@ -178,14 +198,18 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 				var checked = '';
 				var text = data[i].qText;
 
-				for (var v = 0; v < defaultselectionList.length; v++) {
-					if (data[i].qText == defaultselectionList[v]) {
-						selectValues.push( data[i].qElemNumber );
+				if (isDefaultSelected == false) {
+					if (defaultselectionList.length > 0) {
+						for (var v = 0; v < defaultselectionList.length; v++) {
+							if (data[i].qText == defaultselectionList[v]) {
+								selectValues.push(data[i].qElemNumber);
+							}
+						}
+
 					}
+				} else {
+					selectValues.push(data[i].qElemNumber);
 				}
-				// if (data[i].qText == layout.defaultselection) {
-				// 	defaultvalue = data[i];
-				// }
 
 				var orientation = '';
 				if (layout.orientation === undefined) {
@@ -207,7 +231,8 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 					objtype = 'button';
 				}
 
-				if (data[i].qState === "S") {
+				//console.log(data[i].qState)
+				if (data[i].qState === "S" || data[i].qState === "O") {
 					if (objtype != 'button') {
 						checked = ' checked ';
 						text = '<strong>' + data[i].qText + '</strong>';
@@ -238,26 +263,51 @@ define(["jquery", "text!./style.css"], function ($, cssContent) {
 				}
 			}
 
-			if (selected === 0) {
-				if (selectValues.length != null) {
-					self.backendApi.selectValues(0, selectValues /*[defaultvalue.qElemNumber]*/, true);
-				}
+			// if (selected === 0) {
+			// 	if (selectValues.length != null) {
+			// 		self.backendApi.selectValues(0, selectValues/*[defaultvalue.qElemNumber]*/, true);
+			// 	}
+			// }
+
+			var dim = 0;
+
+			if (isDefaultSelected == false) {
+				self.backendApi.selectValues(dim, selectValues, layout.multiple);
 			}
 
 			$element.html(html);
-			if (this.selectionsEnabled) {
-				$element.find('input').on('qv-activate', function () {
-					if (this.hasAttribute("data-value")) {
-						var value = parseInt(this.getAttribute("data-value"), 10), dim = 0;
-						if (layout.multiple === false) {
-							self.backendApi.selectValues(dim, [value], false);
-						} else {
-							self.backendApi.selectValues(dim, [value], true);
-						}
-						$(this).toggleClass("selected");
-					}
+			//if (this.selectionsEnabled) {
+			//$element.find('input').on('qv-activate', function () {
+			//if (this.hasAttribute("data-value")) {
+						//var value = parseInt(this.getAttribute("data-value"), 10),
+
+			var value = [];
+
+			if (isDefaultSelected == true) {
+				$element.find('input').each(function (i, input) {
+					selectValues.push(parseInt(input.getAttribute("data-value"), 10));
+					//value.push(parseInt(input.getAttribute("data-value"), 10));
 				});
 			}
+
+			$element.find('input').on('qv-activate', function () {
+				var valueS = parseInt(this.getAttribute("data-value"), 10);
+				console.log(toggle)
+				self.backendApi.selectValues(dim, [valueS], layout.multiple);
+			});
+
+			isDefaultSelected = true;
+			// if (isDefaultSelected == true) {
+			// 	//self.backendApi.selectValues(dim, value, toggle);
+			// } else {
+
+			// 	isDefaultSelected = true;
+			// }
+
+			//$(this).toggleClass("selected");
+			//}
+			//});
+			//	}
 		}
 	};
 });
